@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  correlation:
+    build:
+      context: ./correlation
+    ports:
+      - "80:80"
+      
+  fin01:
+    build:
+      context: ./fin01
+    ports:
+      - "8000:8000"
