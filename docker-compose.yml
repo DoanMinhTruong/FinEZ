@@ -1,14 +1,45 @@
 version: '3'
 
 services:
-  correlation:
-    build:
-      context: ./correlation
-    ports:
-      - "80:80"
-      
   fin01:
     build:
       context: ./fin01
     ports:
       - "8000:8000"
+    depends_on:
+      - db
+  db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=fin01
+      - POSTGRES_PASSWORD=truong
+      - POSTGRES_DB=fin01_db
+  daily_db:
+    build:
+      context: ./dailydb
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+  mvo:
+    build:
+      context: ./mvo
+    ports:
+      - "5001:5001"
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_PASSWORD=truong
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_DATABASE=dailydb
+volumes:
+  postgres_data:
+  mongodb_data:
