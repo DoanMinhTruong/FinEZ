@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fin01</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.js" ></script>
+    <link rel="stylesheet" href="{% static 'css/base_user.css'%}">
+</head>
+
+<body>
+    <div id="window" class="container justify-content-center">
+            <div class="row justify-content-center">
+                
+                <div class="col-md-10" id = "content">
+                        <div id="main" class="row">
+                            {% block content %}
+
+                            {% endblock %}
+                        </div>
+                        <div id="current_time" class="d-flex justify-content-center">
+                           
+                        </div>
+                        <!-- <script>
+                            $(document).ready(function(){
+                                $('#current_time').append('<p class="text-secondary mx-1">Current time:</p>')
+                                $('#current_time').append('<p class="text-white mx-1">'+ new Date().toLocaleString() + '</p>')
+                                $('#current_time').append('<p class="text-secondary"> (UTC-7)</p>')
+                            });
+                        </script> -->
+                </div>
+            </div>
+    </div>
+    
+   
+</body>
+<!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+</html>

@@ -1,0 +1,272 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div id="mvo-area" class="h-100" style="overflow-y: scroll;">
+
+
+<script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+<link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<div>
+        <select data-placeholder="Begin typing a name to filter..." multiple class="chosen-select col-md-4" id="mvo-stocks" name="test">
+            <option value=""></option>
+        </select>
+        <input type="text" id='mvo_start_date' placeholder="Start Date">
+        <input type="text" id='mvo_end_date' placeholder="End Date">
+        <button class="btn btn-info" id="mvo-submit">Submit</button>
+</div>
+<div id="mvo-charts" class="mx-3">
+    <div class="row">
+        <div class="col-md-6" id="prices-chart">
+
+        </div>
+        <div class="col-md-5" id="corr-chart">
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 row"> 
+            <div class="col-md-5" id="weight-chart-max">
+    
+            </div>
+            <div class="col-md-5" id="weight-chart-min">
+        
+            </div>
+        </div>
+        <div class="col-md-6 row">
+            <div class="col-md-10" id="feasible-chart">
+    
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<script>
+    _30stock = {{ stocks | safe }}
+    select_stock = document.getElementById('mvo-stocks');
+    $.each(_30stock, function(key , value){
+    let option = document.createElement('option');
+        option.innerText = value;
+        select_stock.appendChild(option);
+    })
+    $(".chosen-select").chosen({
+  no_results_text: "Oops, nothing found!"
+})
+</script>
+<script>
+    $("#mvo-submit").click(function(){
+        $("#prices-chart").html("");
+        $("#corr-chart").html("");
+        $("#weight-chart").html("");
+        $("#feasible-chart").html("");
+
+        selected_tickers = $("#mvo-stocks").val()
+        $.ajax({
+            url: '{% url "mvo" %}',
+            method : 'post',
+            dataType : "json",
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                'tickers' : selected_tickers,
+                'start_date' : $('#mvo_start_date').val(),
+                'end_date' : $('#mvo_end_date').val(),
+            },
+            success: function(res){
+                prices = (res.prices)
+                console.log(res)
+                series_prices = []
+                for(var key in prices){
+                    let tmp = {}
+                    tmp['name'] = key
+                    tmp['data']= []
+                    for(var k in prices[key]){
+                        tmp['data'].push({x : parseInt(k) , y : prices[key][k]})
+                        
+                    }
+                    series_prices.push(tmp)
+                }
+                console.log(series_prices)
+                var options = {
+                        chart: {
+                            height: 400,
+                            foreColor : '#b2bbbf',
+                            type: 'line',
+                        },
+                        series: series_prices,
+                        title: {
+                            text: "Stocks Price",
+                            align: 'left'
+                        },
+                        xaxis: {
+                            type: 'datetime',
+                            labels:{
+                                show : false,
+                            }
+                        },
+                        // yaxis: {
+                        //     tooltip: {
+                        //         enabled: true
+                        //     }
+                        // },
+                        fill:{colors:['#F44336', '#E91E63', '#9C27B0']},
+                        tooltip: {
+                            x: {
+                                format: 'dd MMM yyyy'
+                            }
+                        },
+                        // tooltip: {
+                        //     custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+                        //         var data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+                        //         return '<ul>' +
+                        //             '<li><b>Open</b>: ' + data.y[0] + '</li>' +
+                        //             '<li><b>Close</b>: ' + data.y[3] + '</li>' +
+                        //             '<li><b>High</b>: ' + data.y[1] + '</li>' +
+                        //             '<li><b>Low</b>: ' + data.y[2] + '</li>' +
+                        //             '<li><b>DateTime</b>: ' + data.time + '</li>' +
+                        //             '</ul>';
+                        //     }
+                        // },
+                    };
+                mvo_stocks_price = new ApexCharts(document.querySelector("#prices-chart")  , options )
+                mvo_stocks_price.render();
+
+                corr_matrix = res.corr_matrix
+                series_corr_matrix = []
+                for(let i = 0 ;  i < (selected_tickers).length; i++){
+                    tmp_sr = {}
+                    tmp_sr['name'] = selected_tickers[i]
+                    tmp_sr['data'] = []
+                    for(var key in corr_matrix[i]){
+                        tmp_sr['data'].push({x : key , y : corr_matrix[i][key]} )
+                    }
+                    series_corr_matrix.push(tmp_sr)
+                }
+                console.log(series_corr_matrix)
+                var options_corr = {
+                        series: series_corr_matrix,
+                        chart: {
+                            foreColor : '#b2bbbf',
+                        height: 350,
+                        type: 'heatmap',
+                        },
+                        dataLabels: {
+                        enabled: false
+                        },
+                        colors: ["#008FFB"],
+                        title: {
+                        text: 'Correlation Matrix'
+                    },
+                };
+
+                var corr_chart = new ApexCharts(document.querySelector("#corr-chart"), options_corr);
+                corr_chart.render();
+                
+                var options_weight_max = {
+                    series: res.w_max,
+                    chart: {
+                    width: 380,
+                    type: 'pie',
+                    },
+                    responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                        width: 200
+                        },
+                        legend: {
+                        position: 'bottom'
+                        }
+                    }
+                    }]
+                    };
+
+                    var weight_chart_max = new ApexCharts(document.querySelector("#weight-chart-max"), options_weight_max);
+                    weight_chart_max.render();
+
+
+                
+                    var options_weight_min = {
+                    series: res.w_min,
+                    chart: {
+                    width: 380,
+                    type: 'pie',
+                    },
+                    responsive: [{
+                    breakpoint: 480,
+                    options: {
+                        chart: {
+                        width: 200
+                        },
+                        legend: {
+                        position: 'bottom'
+                        }
+                    }
+                    }]
+                    };
+
+                    var weight_chart_min = new ApexCharts(document.querySelector("#weight-chart-min"), options_weight_min);
+                    weight_chart_min.render();    
+
+
+
+                    cml = []
+                    for (let i = 0 ; i < (res.cml_x).length ; i++){
+                        cml.push({x : res.cml_x[i] , y: res.cml_y[i]});
+                    }
+                    ef = []
+                    for (let i = 0 ; i < (res.x_ef).length ; i++){
+                        ef.push({x : res.x_ef[i] , y: res.y_ef[i]});
+                    }
+                    portfolio_scatter = []
+                    for (let i = 0 ; i < (res.p_volatility).length ; i++){
+                        portfolio_scatter.push({x : res.p_volatility[i] , y: res.p_returns[i]});
+                    }
+                    var option_feasible = {
+                    series: [
+                        {
+                            'name' : 'CML(Rf=4.36%)' ,
+                            'type' : 'line' , 
+                            'data' : cml 
+                        },
+                        {
+                            'name' : 'Efficient Frontier' ,
+                            'type' : 'line' , 
+                            'data' : ef 
+                        },
+                        // {
+                        //     'name' : 'Portfolios(*)',
+                        //     'type' : 'scatter',
+                        //     data : portfolio_scatter
+                        // }
+                    ],
+                    chart: {
+                            height: 400,
+                            foreColor : '#b2bbbf',
+                        },
+                        yaxis: {
+                        labels: {
+                            show: false,
+                        }
+                        },
+                        xaxis: {
+                        labels: {
+                            show: false,
+                        }
+                        },
+                    
+                    };
+
+                    var feasible_chart = new ApexCharts(document.querySelector("#feasible-chart"), option_feasible);
+                    feasible_chart.render();   
+                    
+                    
+
+                    
+            }
+        })
+    })
+</script>
+</div>
+{% endblock content %}

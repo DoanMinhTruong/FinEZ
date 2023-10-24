@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div id="create_portfolio" class="mt-2">
+    <a href="{% url 'create_portfolio' %}" class="btn btn-info">CREATE PORTFOLIO</a>
+</div>
+{% if portfolios %}
+    <div id="portfolios" style="height:37vh;">
+        <h1>Portfolio Table</h1>
+        <table class="table table-bordered text-white" style="max-height: 37vh; overflow: scroll;">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Create At</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for portfolio in portfolios %}
+                <tr>
+                    <td>{{portfolio.name}}</td>
+                    <td>{{portfolio.type}}</td>
+                    <td>{{portfolio.description}}</td>
+                    <td>{{portfolio.created_at}} 
+                        <a href="{% url 'delete_portfolio' portfolio.id %}">DELETE</a>
+                    </td>
+                </tr>
+            {% endfor %}
+                
+                
+                <!-- Thêm các hàng khác tương tự cho dữ liệu của bạn -->
+            </tbody>
+        </table>
+        
+    {% else %}
+        <p class="text-white">{{ no_portfolio_message }}</p>
+    {% endif %}
+    </div>
+    <div id="stock_portfolio">
+        <h1>Stock Table</h1>
+        <table class="table table-bordered text-white" style="max-height: 37vh; overflow: scroll;">
+            <thead>
+                <tr>
+                    <th>Portfolio</th>
+                    <th>Stock</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for st in stock_portfolio %}
+                <tr>
+                    <td>{{st.portfolio}}</td>
+                    <td>{{st.stock}}</td>
+                    <td>{{st.amount}}</td>
+                   
+                </tr>
+            {% endfor %}
+                
+                
+                <!-- Thêm các hàng khác tương tự cho dữ liệu của bạn -->
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

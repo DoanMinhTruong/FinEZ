@@ -1,0 +1,33 @@
+{% extends 'base_user.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-center text-white mt-3 border-bottom">
+    <div class="h1 fw-bold">LOGIN</div>
+</div>
+<form action="" method="POST" id="login_form" class="text-white">
+    {% csrf_token %}
+    {{form.as_p}}
+    <div id="submit_form" class="row justify-content-center">
+        <input type="submit" value="Login" class="btn btn-info px-4 py-2 fw-bold col-md-3" style="font-size: 22px;">
+    </div>
+    <p>Don't have an account? <a href="{%url 'user_register' %}">Register</a></p>
+</form>
+<style>
+    #window{
+        height: 50vh;
+    }
+</style>
+<script>
+    $(document).ready(function(){
+        var form = document.getElementById("login_form");
+        var ps = form.getElementsByTagName('p');
+        for(let i = 0 ; i < ps.length; i++){
+            ps[i].setAttribute('class' , 'row my-4 input-group');
+            let label = ps[i].getElementsByTagName('label')[0];
+            label.setAttribute('class','col-md-5 h5');
+            let input = ps[i].getElementsByTagName('input')[0];
+            input.setAttribute('class','col-md-7 form-control');
+        }
+    })
+</script>
+{% endblock %}

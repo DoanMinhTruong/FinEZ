@@ -1,0 +1,74 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0 30vh;
+    overflow: hidden;
+    background-color: #a5cdf6;
+    background-image: linear-gradient(62deg, #8EC5FC 0%, #E0C3FC 100%);
+}
+
+#window {
+    height: 70vh;
+    background-color: #3a4055;
+    margin: 10vh 0;
+    padding: 0;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+#window > row{
+    border-radius: 10%;
+    background-color: #3a4055;
+}
+
+.menu-container {
+    background-color : rgba(5,8,19,255);
+    /* width: 13em; */
+    height:80vh;
+    padding-top: 0px;
+    
+}
+
+.menu-item {
+    display: block;
+    padding: 10px 0;
+    text-transform: uppercase;
+    font-weight: bold;
+    color:#ffffff;
+    text-decoration: none;
+}
+
+.menu-item i {
+    margin-right: 10px;
+    margin-left : 18px;
+    font-size: 25px;
+}
+
+.brand {
+    margin-top: auto;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.brand i {
+    margin-right: 10px;
+
+    margin-left : 16px;
+    font-size: 25px;
+}
+.brand {
+    margin-bottom: 35px;
+    font-size: 28px;
+}
+
+.menu-control{
+    /* background-color: aqua; */
+    width: 100%;
+    padding: 18px 0;
+}
+.menu-control:hover{
+    cursor: pointer;
+    background-color: #a5cdf6;
+
+    border-left: 6px solid #1a73b5;
+}

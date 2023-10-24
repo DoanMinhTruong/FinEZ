@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<form action="" method="POST" id="create_portfolio_form" class="text-white">
+    {% csrf_token %}
+    <!-- {{form.as_p}} -->
+    {% for field in form %}
+	<p>
+		{% if field.errors %}
+		<ul class="errorlist">
+			{% for error in field.errors %}
+			<li class="text-warning">{{ error }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+	 	{{ field.label_tag }} {{ field }}
+	</p>
+	{% endfor %}
+    
+    <div id="submit_form" class="row justify-content-center">
+        <input type="submit" value="CREATE" class="btn btn-info px-4 py-2 fw-bold col-md-3" style="font-size: 22px;">
+    </div>
+</form>
+{% endblock %}
